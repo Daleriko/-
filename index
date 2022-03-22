@@ -1,0 +1,61 @@
+импортировать  псевдоним  из  '@rollup/plugin-alias' ;
+импортировать  babel  из  '@rollup/plugin-babel' ;
+импортировать  commonjs  из  '@rollup/plugin-commonjs' ;
+импортировать  json  из  '@rollup/plugin-json' ;
+импортировать  мульти  из  '@rollup/plugin-multi-entry' ;
+импортировать  nodeResolve  из  '@rollup/plugin-node-resolve' ;
+импортировать  nodePolyfills  из  'rollup-plugin-node-polyfills' ;
+импортировать  замену  из  '@rollup/plugin-replace' ;
+
+const  extensions  =  [ '.js' ,  '.ts' ] ;
+
+экспорт  по умолчанию  {
+  ввод : {
+    включают : [ 'test/**/*.test.ts' ] ,
+    исключить : [ 'test/agent-manager.test.ts' ,  'test/bpf-loader.test.ts' ] ,
+  } ,
+  внешний : [ 'node-forge' ,  'http2' ,  '_stream_wrap' ,  'mockttp' ] ,
+  вывод : {
+    файл : 'test/dist/bundle.js' ,
+    формат : 'эс' ,
+    исходная карта : правда ,
+  } ,
+  плагины : [
+    мульти ( ) ,
+    обычные ( ) ,
+    узелРазрешение ( {
+      браузер : правда ,
+      PreferBuiltins : false ,
+      расширения ,
+      дедупликация : [ 'bn.js' ,  'буфер' ] ,
+    } ) ,
+    вавилон ( {
+      исключить : '**/node_modules/**' ,
+      расширения ,
+      babelHelpers : 'время выполнения' ,
+      плагины : [ '@babel/plugin-transform-runtime' ] ,
+    } ) ,
+    nodePolyfills ( ) ,
+    заменить ( {
+      'process.env.BROWSER' : 'истина' ,
+      'процесс.env.TEST_LIVE' : 'истина' ,
+    } ) ,
+    псевдоним ( {
+      записи : [
+        {
+          найти : / ^ \. \. \/ источник \/ . * \. js $ / ,
+          замена : './lib/index.browser.esm.js' ,
+        } ,
+      ] ,
+    } ) ,
+    json ( ) ,
+  ] ,
+  onwarn : функция  ( предупреждение ,  rollupWarn )  {
+    if  ( предупреждение . код  !==  'CIRCULAR_DEPENDENCY'  &&  предупреждение . код  !==  'EVAL' )  {
+      rollupWarn ( предупреждение ) ;
+    }
+  } ,
+  древотряс : {
+    moduleSideEffects : путь  =>  путь . заканчивается ( 'test.ts' ) ,
+  } ,
+} ;
